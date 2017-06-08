@@ -151,16 +151,15 @@ $bg-color:#eee !default;
 
 Sass에서는 수학 연산자들을 사용 할 수 있다.
 
-Operator | Description
------------- | -------------
-+ | addition
-- | subtracition
-/ | division
-* | multiplication
-% | modulo
-== | equality
-!= | inequality
-
+| Operator | Description |
+|---|---|
+| + | addition |
+| -  | subtracition |
+| /  | division |
+| * | multiplication |
+| % | modulo |
+| == | equality |
+| !=  | inequality |
 
 ```scss
 // sass
@@ -337,6 +336,102 @@ a:visited {
 }
 ```
 
+#### `&` 활용
+
+##### 적은 반복으로 의사 클래스를 작성할 수있다.
+
+```scss
+// sass
+
+a{
+	&:visited{}
+	&:hover{}
+	&:active{}
+}
+
+// css compiled
+
+a:visited{}
+a:hover{}
+a:active{}
+
+```
+
+##### 자식, 인접 형제, 일반 형제 선택자와 함께 사용하면 편하다.
+
+```scss
+// sass
+
+a{
+	& > span{}
+	& + span{}
+	& ~ span{}
+}
+
+// 위 코드에서 &는 생략 할 수 있다.
+/*
+a{
+	> span{}
+}
+*/
+
+// css compiled
+
+a > span{}
+a + span{}
+a ~ span{}
+```
+
+##### 반드시 `&`로 시작할 필요는 없다. 오른쪽에 배치하여 선택자를 한정시킬 수 있다.
+
+```scss
+// sass
+
+.header{
+	body.main &{
+		border-bottom:10px solid rgba(255, 0, 0, 0.4);
+	}
+}
+
+// css compiled
+
+body.main .header{border-bottom:10px solid rgba(255, 0, 0, 0.4);}
+```
+
+##### 클래스를 조합할 수 있다.
+
+```scss
+// sass
+
+.btn{
+	&-default{}
+	&-primary{}
+}
+
+// css compiled
+
+.btn-default{}
+.btn-primary{}
+```
+
+##### `&`는 완전히 컴파일 된 부모 선택자이다 라는 것을 생각하자.
+```scss
+//sass
+
+.parent {
+	.child {
+		& div & & > a {	// & <- 이 줄 전까지 컴파일된 부모 선택자를 가지고온다고 보면 된다. 그럼 & 는 .parent .child 가 된다.
+			color:red;
+		}
+	}
+}
+
+// css compiled
+
+.parent .child div .parent .child .parent .child > a{color:red;}
+
+```
+
 ### `@at-root`
 중첩에서 벗어나려면 `@at-root` 지시자를 사용한다.
 아래 코드에서 sibling 클래스가 container 클래스 밖에서도 사용한다고 할때 이 지시자를 사용한다.
@@ -473,6 +568,12 @@ partial된 sass 파일명 선두에 붙인 (_) 의 의미는 import는 수행하
 	color: #333;
 }
 ```
+
+주의할 점!
+* @media 안에서 외부의 선택자를 @extend할 수 없다.
+* 같은 지시어 안에 있는 선택자만 @extend할 수 있다.
+
+`@extend`는 속성을 중복하지 않고 선택자를 합치기 때문에 파일 크기와 관련해서 도움이 된다고 한다.
 
 ### placeholder 선택자 `%`
 `%`를 사용하면 상속은 할 수 있지만 해당 선택자는 컴파일 되지 않는다.
@@ -795,3 +896,23 @@ $j: 6;
 }
 ```
 
+## sass-guidelin 요약
+* 탭 대신 스페이스 두(2)칸을 들여쓴다.
+* 행의 너비는 80글자
+* css를 여러 행으로 적절히 작성한다.
+* 공백을 의미 있게 사용한다.
+* 문자열과 URL에는 인용 부호(작은 따옴표)를 붙인다.
+* 뒤 따르는 0은 표 기하지 앟는다.
+* 연산은 괄호로 감싼다.
+* 매직 넘버를 피한다.
+* 색은 키워드 > HSL > RGB > 16진법 순으로 표기한다.
+* 리스트는 쉼표로 구분
+* 리스트에는 뒤뜨르는 쉼표를 붙이지 않는다.
+* 맵에는 뒤따르는 쉼표를 붙인다.
+* 가상 클래스와 가상 요소 외에는 선택자를 내포하지 않는다.
+* 작명 시 하이픈으로 구분
+* 많은 주석을 붙인다.
+* 간단한 믹스인을 사용한다.
+* 반복문은 최소한으로 사용, `@while`은 사용하지 않는다.
+* 의존성의 수를 줄인다.
+* 경고와 오류를 의미 있게 사용!
