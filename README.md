@@ -687,7 +687,58 @@ mixin을 활용해서 vendor prefix를 적용하는 코드를 만들어본다.
 }
 ```
 
+### 전달 인자 기본값 설정
+믹스인 호출 시 인자를 전달하지 않아 오류가 발생하는 것을 방지하기 위해서 특정 값을 기본으로 설정할 수 있다.
+
+```scss
+
+// sass
+@mixin border-radius($radius:4px){
+	-webkit-border-radius:$radius;
+	-moz-border-radius:$radius;
+	border-radius:$radius;
+}
+
+div{
+	@include border-radius;
+}
+
+// css compiled
+div{
+	-webkit-border-radius:4px;
+	-moz-border-radius:4px;
+	border-radius:4px;
+}
+```
+
+### 키워드 인자값
+Sass 3.1에서 새롭게 소개된 키워드 아규먼트이다. 키워드 아규먼트는 믹스인이 여러개 인자를 받아야 할 때 특히 유용하다.
+
+```scss
+
+// sass
+@mixin border-radius($radius:4px, $moz:true, $webkit:true, $ms:true){
+	@if $moz {-moz-border-radius:$radius;}
+	@if $webkit {-webkit-border-radius:$radius;}
+	@if $ms {-ms-border-radius:$radius;}
+	border-radius:$radius;
+}
+
+.wrap{
+	@include border-radius(10px, $moz:false);
+}
+
+// css compiled
+
+.wrap{
+	webkit-border-radius: 10px;
+	-ms-border-radius: 10px;
+	border-radius: 10px;
+}
+```
+
 ### `#{}` Interpolation
+보간법이라고도 한다.
 이 표현은 특정문자열을 따로 처리하지 않고 그대로 출력 할 때 사용
 변수는 속성값으로만 사용할 수 있으나 `#{}`을 사용하면 속성값은 물론 셀럭터와 속성명에도 사용할 수 있다.
 또한 연산의 대상으로 취급되지 않도록 할 수도 있다.
@@ -723,6 +774,28 @@ mixin은 style markup을 반환하지만, function은 `@return` 지시자를 통
 ```
 
 자주 사용할 것 같은 함수는 위와 같이 단축함수를 만들어 사용해라!
+
+### `@debug`, `@warn` 지시어
+위 두 지시어는 컴파일 시 확인 가능하다.
+오류를 사용자에게 알려주고자 할때 사용할 수 있다(cmd 및 터미널에서 확인가능)
+
+```scss
+
+// sass
+@function contrast-text($bgcolor, $amount : 50%){
+	$text-color: null;
+
+	// 유효성 겁사
+	@if type-of($bgcolor) != colorP{
+		@warn "전달 받은 인자의 데이터 형이 잘못되었습니다. color형이 필요하다.";
+		@debug "전달 받은 인자 $bgcolor 값은 #{type-of($bgcolor)} 입니다"
+	}
+	.
+	.
+	.
+}
+
+```
 
 ## @if
 Sass 에서도 조건문을 사용할 수 있다.
